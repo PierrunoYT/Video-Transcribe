@@ -4,6 +4,7 @@ import yt_dlp
 import openai
 from pydub import AudioSegment
 from pathlib import Path
+import json
 
 MAX_CHUNK_SIZE = 25 * 1024 * 1024  # 25 MB in bytes
 
@@ -56,6 +57,19 @@ def text_to_speech(text, output_file="tts_output.mp3"):
     response.stream_to_file(output_path)
     print(f"Text-to-Speech audio saved to {output_file}")
 
+def get_api_key():
+    config_file = Path.home() / '.openai_api_key.json'
+    if config_file.exists():
+        with open(config_file, 'r') as f:
+            config = json.load(f)
+            return config.get('api_key')
+    
+    api_key = input("Bitte geben Sie Ihren OpenAI API-Schlüssel ein: ")
+    with open(config_file, 'w') as f:
+        json.dump({'api_key': api_key}, f)
+    print(f"API-Schlüssel wurde in {config_file} gespeichert.")
+    return api_key
+
 def main():
     parser = argparse.ArgumentParser(description="Transcribe YouTube videos using OpenAI's Whisper model and optionally convert to speech.")
     parser.add_argument("url", help="YouTube video URL")
@@ -64,8 +78,8 @@ def main():
     parser.add_argument("--tts-output", default="tts_output.mp3", help="Output file name for TTS audio (default: tts_output.mp3)")
     args = parser.parse_args()
 
-    # Set your OpenAI API key
-    openai.api_key = "your_openai_api_key_here"
+    # Get and set OpenAI API key
+    openai.api_key = get_api_key()
 
     # Download audio
     audio_path = "temp_audio.mp3"
