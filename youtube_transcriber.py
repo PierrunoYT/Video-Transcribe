@@ -55,15 +55,22 @@ def transcribe_audio(audio_chunks):
 def text_to_speech(text, output_file="tts_output.mp3"):
     client = openai.OpenAI()
     
-    response = client.audio.speech.create(
-        model="tts-1",
-        voice="alloy",
-        input=text
-    )
+    # Encode the text to UTF-8 to handle non-ASCII characters
+    encoded_text = text.encode('utf-8').decode('utf-8')
+    
+    try:
+        response = client.audio.speech.create(
+            model="tts-1",
+            voice="alloy",
+            input=encoded_text
+        )
 
-    output_path = Path(output_file)
-    response.stream_to_file(output_path)
-    print(f"Text-to-Speech audio saved to {output_file}")
+        output_path = Path(output_file)
+        response.stream_to_file(output_path)
+        print(f"Text-to-Speech audio saved to {output_file}")
+    except Exception as e:
+        print(f"An error occurred during text-to-speech conversion: {str(e)}")
+        print("Skipping text-to-speech conversion.")
 
 def get_api_key():
     config_file = Path.home() / '.openai_api_key.json'
@@ -113,7 +120,11 @@ def main():
 
     # Perform Text-to-Speech if enabled
     if tts_enabled:
-        text_to_speech(transcript, tts_output)
+        try:
+            text_to_speech(transcript, tts_output)
+        except Exception as e:
+            print(f"An error occurred during text-to-speech conversion: {str(e)}")
+            print("Continuing without text-to-speech output.")
 
     # Clean up temporary audio file
     os.remove(audio_path)
