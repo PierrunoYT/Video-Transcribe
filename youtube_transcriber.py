@@ -4,6 +4,8 @@ import openai
 from pydub import AudioSegment
 from pathlib import Path
 import json
+import unicodedata
+import re
 
 MAX_CHUNK_SIZE = 25 * 1024 * 1024  # 25 MB in bytes
 
@@ -55,14 +57,17 @@ def transcribe_audio(audio_chunks):
 def text_to_speech(text, output_file="tts_output.mp3"):
     client = openai.OpenAI()
     
-    # Encode the text to UTF-8 to handle non-ASCII characters
-    encoded_text = text.encode('utf-8').decode('utf-8')
+    # Normalize Unicode characters to their closest ASCII equivalent
+    normalized_text = unicodedata.normalize('NFKD', text).encode('ASCII', 'ignore').decode('ASCII')
+    
+    # Remove any remaining non-ASCII characters
+    ascii_text = re.sub(r'[^\x00-\x7F]+', '', normalized_text)
     
     try:
         response = client.audio.speech.create(
             model="tts-1",
             voice="alloy",
-            input=encoded_text
+            input=ascii_text
         )
 
         output_path = Path(output_file)
