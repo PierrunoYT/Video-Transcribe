@@ -1,4 +1,4 @@
-# YouTube Transcriber and Text-to-Speech Tool
+# YT2Text: YouTube Transcriber and TTS
 
 This tool allows you to transcribe YouTube videos and optionally convert the transcription to speech. It uses OpenAI's Whisper model for transcription and TTS-1 model for text-to-speech conversion.
 
@@ -19,8 +19,8 @@ This tool allows you to transcribe YouTube videos and optionally convert the tra
 
 1. Clone this repository:
    ```
-   git clone https://github.com/yourusername/youtube-transcriber.git
-   cd youtube-transcriber
+   git clone https://github.com/yourusername/yt2text.git
+   cd yt2text
    ```
 
 2. Create a virtual environment:
