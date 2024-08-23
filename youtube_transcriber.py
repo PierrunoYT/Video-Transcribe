@@ -1,4 +1,3 @@
-import argparse
 import os
 import yt_dlp
 import openai
@@ -71,17 +70,22 @@ def get_api_key():
     return api_key
 
 def main():
-    parser = argparse.ArgumentParser(description="Transcribe YouTube videos using OpenAI's Whisper model and optionally convert to speech.")
-    parser.add_argument("--output", default="transcript.txt", help="Output file name for transcript (default: transcript.txt)")
-    parser.add_argument("--tts", action="store_true", help="Enable Text-to-Speech conversion")
-    parser.add_argument("--tts-output", default="tts_output.mp3", help="Output file name for TTS audio (default: tts_output.mp3)")
-    args = parser.parse_args()
-
     # Get and set OpenAI API key
     openai.api_key = get_api_key()
 
     # Prompt for YouTube video URL
     url = input("Bitte geben Sie die YouTube-Video-URL ein: ")
+
+    # Prompt for transcript output file name
+    transcript_output = input("Geben Sie den Namen für die Transkriptionsdatei ein (Standard: transcript.txt): ") or "transcript.txt"
+
+    # Prompt for Text-to-Speech option
+    tts_enabled = input("Möchten Sie Text-to-Speech aktivieren? (j/n): ").lower() == 'j'
+
+    # If TTS is enabled, prompt for TTS output file name
+    tts_output = None
+    if tts_enabled:
+        tts_output = input("Geben Sie den Namen für die TTS-Audiodatei ein (Standard: tts_output.mp3): ") or "tts_output.mp3"
 
     # Download audio
     audio_path = "temp_audio.mp3"
@@ -94,14 +98,14 @@ def main():
     transcript = transcribe_audio(audio_chunks)
 
     # Save transcript to file
-    with open(args.output, "w", encoding="utf-8") as f:
+    with open(transcript_output, "w", encoding="utf-8") as f:
         f.write(transcript)
 
-    print(f"Transcription saved to {args.output}")
+    print(f"Transkription wurde in {transcript_output} gespeichert.")
 
     # Perform Text-to-Speech if enabled
-    if args.tts:
-        text_to_speech(transcript, args.tts_output)
+    if tts_enabled:
+        text_to_speech(transcript, tts_output)
 
     # Clean up temporary audio file
     os.remove(audio_path)
