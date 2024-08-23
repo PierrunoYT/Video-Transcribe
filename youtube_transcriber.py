@@ -63,10 +63,10 @@ def get_api_key():
             config = json.load(f)
             return config.get('api_key')
     
-    api_key = input("Bitte geben Sie Ihren OpenAI API-Schlüssel ein: ")
+    api_key = input("Please enter your OpenAI API key: ")
     with open(config_file, 'w') as f:
         json.dump({'api_key': api_key}, f)
-    print(f"API-Schlüssel wurde in {config_file} gespeichert.")
+    print(f"API key has been saved in {config_file}.")
     return api_key
 
 def main():
@@ -74,18 +74,18 @@ def main():
     openai.api_key = get_api_key()
 
     # Prompt for YouTube video URL
-    url = input("Bitte geben Sie die YouTube-Video-URL ein: ")
+    url = input("Please enter the YouTube video URL: ")
 
     # Prompt for transcript output file name
-    transcript_output = input("Geben Sie den Namen für die Transkriptionsdatei ein (Standard: transcript.txt): ") or "transcript.txt"
+    transcript_output = input("Enter the name for the transcription file (default: transcript.txt): ") or "transcript.txt"
 
     # Prompt for Text-to-Speech option
-    tts_enabled = input("Möchten Sie Text-to-Speech aktivieren? (j/n): ").lower() == 'j'
+    tts_enabled = input("Do you want to enable Text-to-Speech? (y/n): ").lower() == 'y'
 
     # If TTS is enabled, prompt for TTS output file name
     tts_output = None
     if tts_enabled:
-        tts_output = input("Geben Sie den Namen für die TTS-Audiodatei ein (Standard: tts_output.mp3): ") or "tts_output.mp3"
+        tts_output = input("Enter the name for the TTS audio file (default: tts_output.mp3): ") or "tts_output.mp3"
 
     # Download audio
     audio_path = "temp_audio.mp3"
@@ -101,7 +101,7 @@ def main():
     with open(transcript_output, "w", encoding="utf-8") as f:
         f.write(transcript)
 
-    print(f"Transkription wurde in {transcript_output} gespeichert.")
+    print(f"Transcription has been saved to {transcript_output}.")
 
     # Perform Text-to-Speech if enabled
     if tts_enabled:
