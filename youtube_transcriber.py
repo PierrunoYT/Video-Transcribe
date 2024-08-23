@@ -3,6 +3,7 @@ import os
 import yt_dlp
 import openai
 from pydub import AudioSegment
+from pathlib import Path
 
 MAX_CHUNK_SIZE = 25 * 1024 * 1024  # 25 MB in bytes
 
@@ -42,10 +43,25 @@ def transcribe_audio(audio_chunks):
         os.remove(chunk)  # Remove the chunk after transcription
     return full_transcript.strip()
 
+def text_to_speech(text, output_file="tts_output.mp3"):
+    client = openai.OpenAI()
+    
+    response = client.audio.speech.create(
+        model="tts-1",
+        voice="alloy",
+        input=text
+    )
+
+    output_path = Path(output_file)
+    response.stream_to_file(output_path)
+    print(f"Text-to-Speech audio saved to {output_file}")
+
 def main():
-    parser = argparse.ArgumentParser(description="Transcribe YouTube videos using OpenAI's Whisper model.")
+    parser = argparse.ArgumentParser(description="Transcribe YouTube videos using OpenAI's Whisper model and optionally convert to speech.")
     parser.add_argument("url", help="YouTube video URL")
-    parser.add_argument("--output", default="transcript.txt", help="Output file name (default: transcript.txt)")
+    parser.add_argument("--output", default="transcript.txt", help="Output file name for transcript (default: transcript.txt)")
+    parser.add_argument("--tts", action="store_true", help="Enable Text-to-Speech conversion")
+    parser.add_argument("--tts-output", default="tts_output.mp3", help="Output file name for TTS audio (default: tts_output.mp3)")
     args = parser.parse_args()
 
     # Set your OpenAI API key
@@ -66,6 +82,10 @@ def main():
         f.write(transcript)
 
     print(f"Transcription saved to {args.output}")
+
+    # Perform Text-to-Speech if enabled
+    if args.tts:
+        text_to_speech(transcript, args.tts_output)
 
     # Clean up temporary audio file
     os.remove(audio_path)
