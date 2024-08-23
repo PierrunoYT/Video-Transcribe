@@ -1,1 +1,26 @@
 .aider*
+# Ignore OpenAI API key file
+.openai_api_key.json
+
+# Python-related ignores
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+env/
+.env
+
+# IDE-specific files
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+temp_audio.mp3
+chunk_*.mp3
+
+# Output files
+transcript.txt
+tts_output.mp3
