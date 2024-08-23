@@ -1,13 +1,12 @@
-# YT2Text: YouTube Transcriber and TTS
+# YT2Text: YouTube Transcriber
 
-This tool allows you to transcribe YouTube videos and optionally convert the transcription to speech. It uses OpenAI's Whisper model for transcription and TTS-1 model for text-to-speech conversion.
+This tool allows you to transcribe YouTube videos. It uses OpenAI's Whisper model for transcription.
 
 ## Features
 
 - Download audio from YouTube videos
 - Transcribe audio using OpenAI's Whisper model
 - Save transcriptions to a text file
-- Optional text-to-speech conversion of the transcription
 - Secure storage of OpenAI API key
 
 ## Prerequisites
@@ -53,10 +52,9 @@ This tool allows you to transcribe YouTube videos and optionally convert the tra
 2. Follow the prompts to:
    - Enter your OpenAI API key (only required on first run)
    - Provide a YouTube video URL
-   - Specify output file names
-   - Choose whether to enable text-to-speech
+   - Specify the output file name for the transcription
 
-3. The script will download the audio, transcribe it, and optionally convert it to speech.
+3. The script will download the audio, transcribe it, and save the transcription to a file.
 
 ## Notes
 

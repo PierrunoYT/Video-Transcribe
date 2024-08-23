@@ -4,8 +4,6 @@ import openai
 from pydub import AudioSegment
 from pathlib import Path
 import json
-import unicodedata
-import re
 
 MAX_CHUNK_SIZE = 25 * 1024 * 1024  # 25 MB in bytes
 
@@ -54,28 +52,6 @@ def transcribe_audio(audio_chunks):
         os.remove(chunk)  # Remove the chunk after transcription
     return full_transcript.strip()
 
-def text_to_speech(text, output_file="tts_output.mp3"):
-    client = openai.OpenAI()
-    
-    # Normalize Unicode characters to their closest ASCII equivalent
-    normalized_text = unicodedata.normalize('NFKD', text).encode('ASCII', 'ignore').decode('ASCII')
-    
-    # Remove any remaining non-ASCII characters
-    ascii_text = re.sub(r'[^\x00-\x7F]+', '', normalized_text)
-    
-    try:
-        response = client.audio.speech.create(
-            model="tts-1",
-            voice="alloy",
-            input=ascii_text
-        )
-
-        output_path = Path(output_file)
-        response.stream_to_file(output_path)
-        print(f"Text-to-Speech audio saved to {output_file}")
-    except Exception as e:
-        print(f"An error occurred during text-to-speech conversion: {str(e)}")
-        print("Skipping text-to-speech conversion.")
 
 def get_api_key():
     config_file = Path.home() / '.openai_api_key.json'
@@ -99,14 +75,6 @@ def main():
     # Prompt for transcript output file name
     transcript_output = input("Enter the name for the transcription file (default: transcript.txt): ") or "transcript.txt"
 
-    # Prompt for Text-to-Speech option
-    tts_enabled = input("Do you want to enable Text-to-Speech? (y/n): ").lower() == 'y'
-
-    # If TTS is enabled, prompt for TTS output file name
-    tts_output = None
-    if tts_enabled:
-        tts_output = input("Enter the name for the TTS audio file (default: tts_output.mp3): ") or "tts_output.mp3"
-
     # Download audio
     audio_path = "temp_audio.mp3"
     audio_path = download_audio(url, audio_path)
@@ -122,14 +90,6 @@ def main():
         f.write(transcript)
 
     print(f"Transcription has been saved to {transcript_output}.")
-
-    # Perform Text-to-Speech if enabled
-    if tts_enabled:
-        try:
-            text_to_speech(transcript, tts_output)
-        except Exception as e:
-            print(f"An error occurred during text-to-speech conversion: {str(e)}")
-            print("Continuing without text-to-speech output.")
 
     # Clean up temporary audio file
     os.remove(audio_path)
