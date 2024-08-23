@@ -29,10 +29,16 @@ def download_audio(url, output_path):
             'preferredcodec': 'mp3',
             'preferredquality': '192',
         }],
-        'outtmpl': output_path,
+        'outtmpl': '%(title)s.%(ext)s',
     }
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([url])
+        info = ydl.extract_info(url, download=True)
+        filename = ydl.prepare_filename(info)
+        final_filename = filename.rsplit('.', 1)[0] + '.mp3'
+    
+    # Rename the file to the desired output_path
+    os.rename(final_filename, output_path)
+    return output_path
 
 def transcribe_audio(audio_chunks):
     full_transcript = ""
@@ -89,7 +95,7 @@ def main():
 
     # Download audio
     audio_path = "temp_audio.mp3"
-    download_audio(url, audio_path)
+    audio_path = download_audio(url, audio_path)
 
     # Split audio into chunks
     audio_chunks = split_audio(audio_path)
