@@ -72,7 +72,6 @@ def get_api_key():
 
 def main():
     parser = argparse.ArgumentParser(description="Transcribe YouTube videos using OpenAI's Whisper model and optionally convert to speech.")
-    parser.add_argument("url", help="YouTube video URL")
     parser.add_argument("--output", default="transcript.txt", help="Output file name for transcript (default: transcript.txt)")
     parser.add_argument("--tts", action="store_true", help="Enable Text-to-Speech conversion")
     parser.add_argument("--tts-output", default="tts_output.mp3", help="Output file name for TTS audio (default: tts_output.mp3)")
@@ -81,9 +80,12 @@ def main():
     # Get and set OpenAI API key
     openai.api_key = get_api_key()
 
+    # Prompt for YouTube video URL
+    url = input("Bitte geben Sie die YouTube-Video-URL ein: ")
+
     # Download audio
     audio_path = "temp_audio.mp3"
-    download_audio(args.url, audio_path)
+    download_audio(url, audio_path)
 
     # Split audio into chunks
     audio_chunks = split_audio(audio_path)
