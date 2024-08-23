@@ -63,4 +63,4 @@ This tool allows you to transcribe YouTube videos. It uses OpenAI's Whisper mode
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
