@@ -44,8 +44,11 @@ def transcribe_audio(audio_chunks):
     full_transcript = ""
     for chunk in audio_chunks:
         with open(chunk, "rb") as audio_file:
-            transcript = openai.Audio.transcribe("whisper-1", audio_file)
-        full_transcript += transcript["text"] + " "
+            transcript = client.audio.transcriptions.create(
+                model="whisper-1", 
+                file=audio_file
+            )
+        full_transcript += transcript.text + " "
         os.remove(chunk)  # Remove the chunk after transcription
     return full_transcript.strip()
 
@@ -75,10 +78,9 @@ def get_api_key():
     print(f"API key has been saved in {config_file}.")
     return api_key
 
-def main():
-    # Get and set OpenAI API key
-    openai.api_key = get_api_key()
+client = openai.OpenAI(api_key=get_api_key())
 
+def main():
     # Prompt for YouTube video URL
     url = input("Please enter the YouTube video URL: ")
 
